@@ -6,11 +6,11 @@ BaseCaching = __import__('base_caching').BaseCaching
 class LIFOCache(BaseCaching):
     """ lifoCache """
     def __init__(self):
-        ''' Init '''
+        ''' init '''
         super().__init__()
 
     def put(self, key, item):
-        """ Put """
+        """ put """
         if key is not None and item is not None:
             length = len(self.cache_data.keys())
             if length + 1 > BaseCaching.MAX_ITEMS \
