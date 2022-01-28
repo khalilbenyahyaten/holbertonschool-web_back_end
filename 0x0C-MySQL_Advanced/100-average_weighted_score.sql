@@ -1,20 +1,16 @@
 -- average weighted score
 -- average weighted score
 DELIMITER $$
-DROP PROCEDURE IF EXISTS ComputeAverageWeightedScoreForUsers;
-CREATE PROCEDURE ComputeAverageWeightedScoreForUsers()
+DROP PROCEDURE IF EXISTS ComputeAverageWeightedScoreForUser ;
+CREATE PROCEDURE ComputeAverageWeightedScoreForUser (IN user_id INT)
 BEGIN
-    DROP VIEW IF EXISTS users_stats;
-    CREATE VIEW users_stats AS
-    SELECT cor.user_id, (SUM(cor.score * pro.weight) / SUM(pro.weight)) as arg 
-    FROM corrections AS cor
-    JOIN projects AS pro ON pro.id = cor.project_id
-    GROUP BY cor.user_id;
-
-    UPDATE users AS usr
+    UPDATE users
     SET average_score = (
-        SELECT arg FROM users_stats WHERE usr.id = user_id
-    );
-    DROP VIEW IF EXISTS users_stats;
+        SELECT SUM(corrections.score * projects.weight) / SUM(projects.weight) 
+        FROM corrections 
+        INNER JOIN projects 
+        ON corrections.project_id = projects.id and corrections.user_id = user_id
+        )
+    WHERE id = user_id;
 END$$
 DELIMITER ;
